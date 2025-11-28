@@ -1,117 +1,177 @@
-import React, { useState, useContext } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import * as Speech from "expo-speech";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { Audio } from "expo-av";
+import axios from "axios";
 import { PlayerContext } from "./PlayerContext";
 
-export default function VoiceControls({ navigation }) {
-  const { togglePlay, nextTrack, prevTrack } = useContext(PlayerContext);
-  const [listening, setListening] = useState(false);
-  const [statusText, setStatusText] = useState(
-    "🎙️ Tap to simulate a voice command: Play, Pause, Next, or Back."
-  );
+const ASSEMBLY_API_KEY = "24f8a8b44ae44344b0db5c5781502a79"; // 🔑 Assembly API Key
 
-  const handleVoiceCommand = (command) => {
-    const lowerCmd = command.toLowerCase();
+export default function VoiceControls() {
+  const {
+    tracks,
+    trackIndex,
+    isPlaying,
+    togglePlay,
+    nextTrack,
+    prevTrack,
+    playTrack
+  } = useContext(PlayerContext);
 
-    if (lowerCmd.includes("play")) {
-      togglePlay();
-      setStatusText("▶️ Command: Play");
-      Speech.speak("Playing track");
-    } else if (lowerCmd.includes("pause")) {
-      togglePlay();
-      setStatusText("⏸️ Command: Pause");
-      Speech.speak("Paused");
-    } else if (lowerCmd.includes("next")) {
-      nextTrack();
-      setStatusText("⏭️ Command: Next Track");
-      Speech.speak("Next track");
-    } else if (lowerCmd.includes("back") || lowerCmd.includes("previous")) {
-      prevTrack();
-      setStatusText("⏮️ Command: Previous Track");
-      Speech.speak("Previous track");
-    } else {
-      setStatusText(`❓ Unrecognized command: "${command}"`);
-      Speech.speak("I didn’t understand that command.");
+  const [status, setStatus] = useState("Press 🎙️ to give a command");
+  const [isLoading, setIsLoading] = useState(false);
+  const recordingRef = useRef(null);
+
+  // Request microphone permission
+  useEffect(() => {
+    (async () => {
+      const { status } = await Audio.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to access microphone is required!");
+      }
+    })();
+  }, []);
+
+  // 🎙️ Record, Upload & Transcribe Voice Command
+  const recordCommand = async () => {
+    try {
+      setIsLoading(true);
+      setStatus("🎤 Listening...");
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      recordingRef.current = recording;
+
+      setTimeout(async () => {
+        await recording.stopAndUnloadAsync();
+        const uri = recording.getURI();
+        setStatus("⏳ Processing command...");
+        await sendToAssembly(uri);
+      }, 4000);
+    } catch (err) {
+      console.error(err);
+      setStatus("⚠️ Recording failed");
+      setIsLoading(false);
     }
   };
 
-  const simulateCommand = () => {
-    const commands = ["play", "pause", "next", "back"];
-    const randomCommand = commands[Math.floor(Math.random() * commands.length)];
-    setListening(true);
-    setStatusText(`🎤 Simulating: "${randomCommand}"`);
-    setTimeout(() => {
-      handleVoiceCommand(randomCommand);
-      setListening(false);
-    }, 1000);
+  const sendToAssembly = async (uri) => {
+    try {
+      const response = await fetch(uri);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioData = new Uint8Array(arrayBuffer);
+
+      const uploadRes = await axios.post(
+        "https://api.assemblyai.com/v2/upload",
+        audioData,
+        {
+          headers: {
+            authorization: ASSEMBLY_API_KEY,
+            "content-type": "application/octet-stream",
+          },
+        }
+      );
+
+      const transcriptRes = await axios.post(
+        "https://api.assemblyai.com/v2/transcript",
+        {
+          audio_url: uploadRes.data.upload_url,
+          language_code: "en_us",
+          punctuate: true,
+        },
+        { headers: { authorization: ASSEMBLY_API_KEY } }
+      );
+
+      let statusRes;
+      do {
+        await new Promise((r) => setTimeout(r, 2000));
+        statusRes = await axios.get(
+          `https://api.assemblyai.com/v2/transcript/${transcriptRes.data.id}`,
+          { headers: { authorization: ASSEMBLY_API_KEY } }
+        );
+      } while (statusRes.data.status !== "completed");
+
+      const text = statusRes.data.text.toLowerCase();
+      setStatus(`🗣️ Heard: "${text}"`);
+      await handleCommand(text);
+    } catch (err) {
+      console.error("Transcription Error:", err.response?.data || err.message);
+      setStatus("❌ Error processing command");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 🎧 Voice Command Handler using PlayerContext
+  const handleCommand = async (command) => {
+    if (command.includes("play")) {
+      if (!isPlaying) await togglePlay();
+    } else if (command.includes("pause")) {
+      if (isPlaying) await togglePlay();
+    } else if (command.includes("next")) {
+      await nextTrack();
+    } else if (command.includes("previous") || command.includes("back")) {
+      await prevTrack();
+    } else if (command.includes("stop")) {
+      if (isPlaying) await togglePlay();
+      // if (tracks.length > 0) await playTrack(trackIndex);
+    } else {
+      setStatus("🤔 Command not recognized. Try: play, pause, next, previous");
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>🎧 Voice Controls</Text>
-      <Text style={styles.instructions}>{statusText}</Text>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#121212",
+        padding: 20,
+      }}
+    >
+      <Text style={{ color: "white", fontSize: 22, marginBottom: 20 }}>
+        🎧 Voice-Controlled Music Player
+      </Text>
 
-      <Pressable
-        style={[styles.button, listening && { backgroundColor: "#0cf" }]}
-        onPress={simulateCommand}
-        disabled={listening}
+      <TouchableOpacity
+        onPress={recordCommand}
+        style={{
+          backgroundColor: "#1DB954",
+          padding: 15,
+          borderRadius: 50,
+          marginBottom: 20,
+        }}
+        disabled={isLoading}
       >
-        <Text style={styles.buttonText}>
-          {listening ? "🎙️ Simulating..." : "🎤 Simulate Voice Command"}
-        </Text>
-      </Pressable>
+        {isLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={{ color: "white", fontSize: 18 }}>🎙️ Speak Command</Text>
+        )}
+      </TouchableOpacity>
 
-      <Pressable
-        style={[styles.button, { backgroundColor: "#555" }]}
-        onPress={() => navigation.goBack()}
+      <Text style={{ color: "#ccc", fontSize: 16, textAlign: "center" }}>
+        {status}
+      </Text>
+
+      <Text
+        style={{
+          color: "#1DB954",
+          marginTop: 20,
+          fontSize: 14,
+        }}
       >
-        <Text style={styles.buttonText}>⬅️ Back</Text>
-      </Pressable>
+        Commands: Play / Pause / Next / Previous / Stop
+      </Text>
 
-      <Text style={styles.note}>
-        ⚙️ Simulation mode only — voice recognition is not available in Expo Go.
+      <Text style={{ color: "#fff", marginTop: 10, fontSize: 16 }}>
+        Now Playing: {tracks[trackIndex]?.title || "None"}
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    color: "#0af",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 30,
-  },
-  instructions: {
-    color: "#fff",
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 40,
-  },
-  button: {
-    backgroundColor: "#0af",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-    width: "80%",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  note: {
-    color: "#888",
-    fontSize: 14,
-    marginTop: 20,
-    textAlign: "center",
-  },
-});
