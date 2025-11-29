@@ -4,59 +4,59 @@
 A React Native + Expo music player with multi-modal controls (Camera Gestures, Touch, Voice, Mouse), Firebase Authentication, Playlists, and Cloud Storage.
 
 ### OVERVIEW
--MusicPlayer is an interactive cross-platform mobile application built using React Native (Expo).
--It allows users to:
--✔ Register & Login using Firebase Authentication
--✔ Upload and stream music via Firebase Storage
--✔ Automatically save tracks by user
--✔ Control playback in five different ways:
--•	Gesture Control (Camera + MediaPipe Hands)
--•	Touch Control
--•	Bluetooth Mouse Gestures
--•	Voice Commands
--•	On-screen player controls
--✔ Manage playlists and track metadata
--✔ Real-time playback progress visualization
+- MusicPlayer is an interactive cross-platform mobile application built using React Native (Expo).
+- It allows users to:
+- ✔ Register & Login using Firebase Authentication
+- ✔ Upload and stream music via Firebase Storage
+- ✔ Automatically save tracks by user
+- ✔ Control playback in five different ways:
+- •	Gesture Control (Camera + MediaPipe Hands)
+- •	Touch Control
+- •	Bluetooth Mouse Gestures
+- •	Voice Commands
+- •	On-screen player controls
+- ✔ Manage playlists and track metadata
+- ✔ Real-time playback progress visualization
 
 ### FEATURES
--🎧 Core Features
--•	Play / Pause / Previous / Next
--•	Animated progress bar
--•	Track metadata (title, artist)
--•	Auto-load user tracks on login
--•	Logout functionality
+- 🎧 Core Features
+- •	Play / Pause / Previous / Next
+- •	Animated progress bar
+- •	Track metadata (title, artist)
+- •	Auto-load user tracks on login
+- •	Logout functionality
 
 ### Authentication
--•	Firebase Auth with persistent login (AsyncStorage)
--•	Login & Registration screens
--•	AuthContext manages global login state
+- •	Firebase Auth with persistent login (AsyncStorage)
+- •	Login & Registration screens
+- •	AuthContext manages global login state
 
 ### Cloud Integration
--•	Firebase Firestore for track management
--•	Firebase Storage for hosting MP3 files
--•	Persistent audio URLs
+- •	Firebase Firestore for track management
+- •	Firebase Storage for hosting MP3 files
+- •	Persistent audio URLs
 
 ### Gesture Controls (CameraControls.js)
--Powered by Expo Camera + MediaPipe Hands:
--•	Thumbs Up → Play/Pause
--•	Swipe Right → Next track
--•	Swipe Left → Previous track
--•	Thumb-to-wrist → Stop
+- Powered by Expo Camera + MediaPipe Hands:
+- •	Thumbs Up → Play/Pause
+- •	Swipe Right → Next track
+- •	Swipe Left → Previous track
+- •	Thumb-to-wrist → Stop
 
 ### Mouse Controls
--•	Single Click → Play/Pause
--•	Double Click → Next Track
--•	Long Press → Previous Track
+- •	Single Click → Play/Pause
+- •	Double Click → Next Track
+- •	Long Press → Previous Track
 
 ### Voice Controls
--•	Commands like “play”, “pause”, “next”, “previous”
+- •	Commands like “play”, “pause”, “next”, “previous”
 
 ### Touch Controls
--•	Tap → Play/Pause
--•	Swipe Right → Next track
--•	Swipe Left → Previous track
--•	Long Press → Restart
--•	Pinch → Album View
+- •	Tap → Play/Pause
+- •	Swipe Right → Next track
+- •	Swipe Left → Previous track
+- •	Long Press → Restart
+- •	Pinch → Album View
 
 ### TECHNOLOGY USED
 |Category|Technology|
@@ -94,23 +94,23 @@ A React Native + Expo music player with multi-modal controls (Camera Gestures, T
 -   └── README.md
 
 ### DEPENDENCIES
--Key libraries used:
--•	expo-av
--•	expo-camera
--•	@mediapipe/hands
--•	firebase
--•	react-native-gesture-handler
--•	@react-navigation/native
--•	@react-navigation/native-stack
--•	@expo/metro-config
--•	@react-native-community/slider
--•	@react-native-async-storage/async-storage
+- Key libraries used:
+- •	expo-av
+- •	expo-camera
+- •	@mediapipe/hands
+- •	firebase
+- •	react-native-gesture-handler
+- •	@react-navigation/native
+- •	@react-navigation/native-stack
+- •	@expo/metro-config
+- •	@react-native-community/slider
+- •	@react-native-async-storage/async-storage
 
 ### POSSIBLE ENHANCEMENTS (FUTURE WORK)
--•	Playlist sharing between users
--•	Equalizer / Audio visualizer
--•	Offline playback with caching
--•	ML-based gesture detection
--•	Add track search & filtering
--•	Improve accuracy of MediaPipe gesture detection
+- •	Playlist sharing between users
+- •	Equalizer / Audio visualizer
+- •	Offline playback with caching
+- •	ML-based gesture detection
+- •	Add track search & filtering
+- •	Improve accuracy of MediaPipe gesture detection
 
