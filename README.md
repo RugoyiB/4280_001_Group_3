@@ -126,6 +126,8 @@ Powered by Expo Camera + MediaPipe Hands:
 
  ├── App.js
  
+ ├── App.json
+ 
  ├── AuthContext.js
  
  ├── PlayerContext.js
