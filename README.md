@@ -3,7 +3,7 @@
 
 A React Native + Expo music player with multi-modal controls (Camera Gestures, Touch, Voice, Mouse), Firebase Authentication, Playlists, and Cloud Storage.
 
-# OVERVIEW
+### OVERVIEW
 MusicPlayer is an interactive cross-platform mobile application built using React Native (Expo).
 It allows users to:
 ✔ Register & Login using Firebase Authentication
@@ -18,7 +18,7 @@ It allows users to:
 ✔ Manage playlists and track metadata
 ✔ Real-time playback progress visualization
 
-# FEATURES
+### FEATURES
 🎧 Core Features
 •	Play / Pause / Previous / Next
 •	Animated progress bar
@@ -26,54 +26,55 @@ It allows users to:
 •	Auto-load user tracks on login
 •	Logout functionality
 
-# Authentication
+### Authentication
 •	Firebase Auth with persistent login (AsyncStorage)
 •	Login & Registration screens
 •	AuthContext manages global login state
 
-# Cloud Integration
+### Cloud Integration
 •	Firebase Firestore for track management
 •	Firebase Storage for hosting MP3 files
 •	Persistent audio URLs
 
-# Gesture Controls (CameraControls.js)
+### Gesture Controls (CameraControls.js)
 Powered by Expo Camera + MediaPipe Hands:
 •	Pinch → Play/Pause
 •	Swipe Right → Next track
 •	Swipe Left → Previous track
 •	Thumb-to-wrist → Stop
 
-# Mouse Controls
+### Mouse Controls
 •	Single Click → Play/Pause
 •	Double Click → Next Track
 •	Long Press → Previous Track
 
-# Voice Controls
+### Voice Controls
 •	Commands like “play”, “pause”, “next”, “previous”
 
-# Touch Controls
+### Touch Controls
 •	Tap → Play/Pause
 •	Swipe Right → Next track
 •	Swipe Left → Previous track
 •	Long Press → Restart
 •	Pinch → Album View
 
-# TECHNOLOGY USED
-Category	                     Technology
-Framework	                     React Native (Expo)
-Navigation	                   React Navigation
-Authentication	               Firebase Auth
-Storage	                       Firebase Storage
-Database	                     Firebase Firestore
-Gesture Recognition	           MediaPipe Hands
-Audio Engine	                 Expo AV (Audio API)
-State Management	             Context API (Auth + Player)
-Slider	                       React-native-community/slider
-Voice API Key	                 ASSEMBLY_API_KEY (24f8a8b44ae44344b0db5c5781502a79), Converts Voice to Text.
-Permissions	                   Expo Camera
+### TECHNOLOGY USED
+|Category|Technology|
+|--------|----------|
+|Framework|React Native (Expo)|
+|Navigation|React Navigation|
+|Authentication|Firebase Auth|
+|StorageFirebase Storage|
+|Database|Firebase Firestore|
+|Gesture Recognition|MediaPipe Hands|
+|Audio Engine|Expo AV (Audio API)|
+|State Management|Context API (Auth + Player)|
+|Slider|React-native-community/slider|
+|Voice API Key|ASSEMBLY_API_KEY (24f8a8b44ae44344b0db5c5781502a79), Converts Voice to Text.|
+|Permissions|Expo Camera|
 
 
-# PROJECT STRUCTURE
+### PROJECT STRUCTURE
 /MusicPlayer
  ├── App.js
  ├── AuthContext.js
@@ -90,9 +91,9 @@ Permissions	                   Expo Camera
  ├── metro.config.js
  ├── babel.config.js
  ├── assets/
-  └── README.md
+   └── README.md
 
-# DEPENDENCIES
+### DEPENDENCIES
 Key libraries used:
 •	expo-av
 •	expo-camera
@@ -105,10 +106,11 @@ Key libraries used:
 •	@react-native-community/slider
 •	@react-native-async-storage/async-storage
 
-# POSSIBLE ENHANCEMENTS (FUTURE WORK)
+### POSSIBLE ENHANCEMENTS (FUTURE WORK)
 •	Playlist sharing between users
 •	Equalizer / Audio visualizer
 •	Offline playback with caching
 •	ML-based gesture detection
 •	Add track search & filtering
 •	Improve accuracy of MediaPipe gesture detection
+
